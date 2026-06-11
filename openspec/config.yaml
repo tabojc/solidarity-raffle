@@ -1,0 +1,42 @@
+schema: spec-driven
+
+context: |
+  Project: rifa (Rifa Solidaria)
+  Purpose: Raffle app for Yudith Ortega's eye surgery fundraiser
+  Tech stack: Next.js 14+ App Router, TypeScript, React, Vercel KV (Redis)
+  Architecture: Serverless (Vercel), SPA with API routes, polling for real-time
+  Hosting: Vercel (free tier)
+  Storage: Vercel KV (free tier, 30K requests/day)
+  Testing: Vitest (recommended for Next.js)
+  Style: Mobile-first, responsive, Spanish UI
+  Auth: Secret link with token (no login)
+  State model: 3 states (available → reserved → sold)
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+    - Consider impact on existing raffle data
+  specs:
+    - Use Given/When/Then for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+    - Specs must be in Spanish (project language)
+  design:
+    - Include sequence diagrams for complex flows
+    - Document architecture decisions with rationale
+    - Prefer simplicity over patterns (this is a small project)
+  tasks:
+    - Group by phase, use hierarchical numbering
+    - Keep tasks completable in one session
+    - Each task must be deployable independently
+  apply:
+    - Follow existing code patterns
+    - Use CSS variables from DESIGN-SPEC.md
+    - Mobile-first implementation
+    tdd: true
+    test_command: "npm run test"
+  verify:
+    test_command: "npm run test"
+    build_command: "npm run build"
+    coverage_threshold: 80
+  archive:
+    - Warn before merging destructive deltas

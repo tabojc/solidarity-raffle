@@ -1,0 +1,47 @@
+# Testing Capabilities — rifa
+
+## Test Runner
+- **Framework**: Vitest (recommended for Next.js)
+- **Status**: Not installed yet (project is pre-initialization)
+- **Install command**: `npm install -D vitest @testing-library/react @testing-library/jest-dom`
+
+## Test Layers
+
+| Layer | Tool | Coverage | Status |
+|-------|------|----------|--------|
+| Unit tests | Vitest | Functions, utilities | Pending |
+| Component tests | Vitest + Testing Library | React components | Pending |
+| Integration tests | Vitest | API routes, KV operations | Pending |
+| E2E tests | Playwright | Full user flows | Pending (v2) |
+
+## Current State
+
+No source code exists yet. Testing capabilities will be initialized when:
+1. `npm init` is run
+2. Vitest is installed
+3. First test files are created
+
+## Recommended Test Structure
+
+```
+tests/
+├── unit/
+│   └── lib/
+│       └── kv.test.ts
+├── components/
+│   ├── NumberGrid.test.tsx
+│   └── NumberCell.test.tsx
+├── api/
+│   └── numbers.test.ts
+└── e2e/
+    └── raffle-flow.test.ts
+```
+
+## Coverage Thresholds
+
+| Metric | Target | Rationale |
+|--------|--------|-----------|
+| Statements | 80% | Core logic must be tested |
+| Branches | 75% | State transitions are critical |
+| Functions | 85% | All API handlers tested |
+| Lines | 80% | Maintain quality baseline |
