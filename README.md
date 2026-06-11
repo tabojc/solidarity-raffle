@@ -1,6 +1,6 @@
 # Solidarity Raffle
 
-A web app to manage number sales for Yudith Ortega's solidarity raffle fundraiser. Built with Next.js, Vercel KV (Upstash Redis), and Tailwind CSS.
+A web app to manage number sales for a solidarity raffle fundraiser. Built with Next.js, Vercel KV (Upstash Redis), and Tailwind CSS.
 
 ## Stack
 

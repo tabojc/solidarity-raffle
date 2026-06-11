@@ -2,7 +2,7 @@
 
 ## Problem Statement
 
-Yudith Ortega necesita realizarse una operación ocular y está organizando una rifa solidaria para recaudar fondos. Actualmente el proceso de venta de números es manual (por WhatsApp, planillas, mensajes), lo cual genera:
+La beneficiaria necesita realizarse una operación ocular y está organizando una rifa solidaria para recaudar fondos. Actualmente el proceso de venta de números es manual (por WhatsApp, planillas, mensajes), lo cual genera:
 
 - Confusión sobre qué números están disponibles/vendidos/reservados
 - Doble venta de números
@@ -27,7 +27,7 @@ Yudith Ortega necesita realizarse una operación ocular y está organizando una 
 - **Qué NO pueden hacer**: Crear rifas, eliminar números, acceder a datos de otros vendedores
 - **Acceso**: Link secreto con token
 
-### 3. Yudith (Admin/Beneficiaria)
+### 3. Admin/Beneficiaria
 - **Qué ve**: Todo — panel completo + estadísticas + CSV export
 - **Qué puede hacer**: Todo lo que los vendedores + exportar datos + ver resumen
 - **Acceso**: Link secreto con token (mismo panel que vendedores, con extras)
@@ -132,8 +132,8 @@ DISPONIBLE → RESERVADO → VENDIDO (confirmado)
 
 // Key: raffle:config
 {
-  "name": "Rifa Solidaria Yudith Ortega",
-  " beneficiary": "Yudith Ortega",
+  "name": "Rifa Solidaria",
+  "beneficiary": "[Beneficiary Name]",
   "prizes": [
     { "position": 1, "amount": 600 },
     { "position": 2, "amount": 400 }
@@ -173,7 +173,8 @@ DISPONIBLE → RESERVADO → VENDIDO (confirmado)
 ```
 ┌─────────────────────────────────┐
 │  [Foto圆形]  RIFA SOLIDARIA    │
-│  Yudith      Para ayudar a...  │
+│  [Foto]      RIFA SOLIDARIA    │
+│  Benef.      Para ayudar a...  │
 └─────────────────────────────────┘
 
 ┌─────────────────────────────────┐
@@ -273,7 +274,7 @@ DISPONIBLE → RESERVADO → VENDIDO (confirmado)
 - **Funcional**: Los 100 números se pueden reservar/vender sin errores
 - **UX**: Un comprador puede reservar un número en < 30 segundos
 - **Confiabilidad**: Sin doble venta de números
-- **Adopción**: Yudith y los vendedores lo usan sin soporte técnico
+- **Adopción**: La beneficiaria y los vendedores lo usan sin soporte técnico
 
 ---
 

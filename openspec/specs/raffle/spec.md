@@ -13,7 +13,7 @@ The raffle system manages number reservations and sales for a humanitarian fundr
 
 ### Raffle Config
 - **Name**: Rifa Solidaria
-- **Beneficiary**: Yudith Ortega
+- **Beneficiary**: [Name]
 - **Prizes**: Primer premio (600$), Segundo premio (400$)
 - **Ticket price**: 20$
 - **Draw date**: 26/07/2026, 10:30 PM

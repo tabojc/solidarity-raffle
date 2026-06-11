@@ -118,7 +118,7 @@
 ### 6. Footer
 ```
 ┌─────────────────────────────────┐
-│  Responsable: Yudith Ortega     │
+│  Responsable: Beneficiaria      │
 └─────────────────────────────────┘
 ```
 - **Style**: Smaller text, centered
@@ -159,7 +159,7 @@
   <img src="photo.jpg" alt="Responsable" class="hero-photo" />
   <div class="hero-text">
     <h1>RIFA SOLIDARIA</h1>
-    <p>Para ayudar a Yudith Ortega con su operación ocular</p>
+    <p>Para ayudar con una operación ocular</p>
   </div>
 </div>
 ```
