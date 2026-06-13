@@ -42,6 +42,20 @@ export async function confirmNumber(
   return { success: true }
 }
 
+export async function undoConfirmNumber(
+  num: string,
+  token: string
+): Promise<{ success: boolean }> {
+  const res = await fetch(`/api/numbers/${num}?token=${token}&action=undo`, {
+    method: "PUT",
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}))
+    throw new Error(body.error ?? "Error al deshacer")
+  }
+  return { success: true }
+}
+
 export async function exportCsv(token: string): Promise<Blob> {
   const res = await fetch(`/api/export?token=${token}`)
   if (!res.ok) throw new Error("Error al exportar")
