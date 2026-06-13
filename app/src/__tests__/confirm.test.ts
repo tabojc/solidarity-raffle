@@ -8,6 +8,7 @@ vi.mock('@/lib/kv', () => ({
   getNumber: mockGetNumber,
   confirmNumber: mockConfirmNumber,
   undoConfirmNumber: mockUndoConfirmNumber,
+  cancelReservation: vi.fn(),
   getAllNumbers: vi.fn(),
   reserveNumber: vi.fn(),
   adminReserveNumber: vi.fn(),

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { confirmNumber, undoConfirmNumber } from '@/lib/kv'
+import { confirmNumber, undoConfirmNumber, cancelReservation } from '@/lib/kv'
 import { rateLimit } from '@/lib/rate-limit'
 
 function isAuthorized(request: Request): boolean {
@@ -44,6 +44,19 @@ export async function PUT(
     if (!result) {
       return NextResponse.json(
         { error: 'Number is not sold' },
+        { status: 409, headers: { 'access-control-allow-origin': '*' } }
+      )
+    }
+    return NextResponse.json(result, {
+      headers: { 'access-control-allow-origin': '*' },
+    })
+  }
+
+  if (action === 'cancel') {
+    const result = await cancelReservation(num)
+    if (!result) {
+      return NextResponse.json(
+        { error: 'Number is not reserved' },
         { status: 409, headers: { 'access-control-allow-origin': '*' } }
       )
     }

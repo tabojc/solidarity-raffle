@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
-import { fetchNumbers, fetchConfig, confirmNumber, undoConfirmNumber, exportCsv } from "@/lib/api"
+import { fetchNumbers, fetchConfig, confirmNumber, undoConfirmNumber, cancelReservation, exportCsv } from "@/lib/api"
 import type { NumbersMap, RaffleConfig } from "@/lib/types"
 
 export default function AdminPage() {
@@ -12,6 +12,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true)
   const [confirming, setConfirming] = useState<string | null>(null)
   const [undoing, setUndoing] = useState<string | null>(null)
+  const [cancelling, setCancelling] = useState<string | null>(null)
 
   const [confirmModal, setConfirmModal] = useState<string | null>(null)
   const [reserveNum, setReserveNum] = useState("")
@@ -87,6 +88,18 @@ export default function AdminPage() {
       alert(err instanceof Error ? err.message : "Error al deshacer")
     } finally {
       setUndoing(null)
+    }
+  }
+
+  async function handleCancelReservation(num: string) {
+    setCancelling(num)
+    try {
+      await cancelReservation(num, token)
+      await loadData()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Error al cancelar")
+    } finally {
+      setCancelling(null)
     }
   }
 
@@ -311,13 +324,26 @@ export default function AdminPage() {
                       <p className="text-xs text-zinc-400 italic">{data.note}</p>
                     )}
                   </div>
-                  <button
-                    onClick={() => setConfirmModal(num)}
-                    disabled={confirming === num}
-                    className="rounded-lg bg-emerald-600 text-white px-4 py-2 text-sm font-medium hover:bg-emerald-700 disabled:opacity-50 transition-colors"
-                  >
-                    {confirming === num ? "..." : "Confirmar pago"}
-                  </button>
+                  <div className="flex gap-2 items-center">
+                    <button
+                      onClick={() => {
+                        if (window.confirm(`¿Cancelar reserva del número ${num}?`)) {
+                          handleCancelReservation(num)
+                        }
+                      }}
+                      disabled={cancelling === num}
+                      className="rounded-lg border border-red-300 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors"
+                    >
+                      {cancelling === num ? "..." : "Cancelar"}
+                    </button>
+                    <button
+                      onClick={() => setConfirmModal(num)}
+                      disabled={confirming === num}
+                      className="rounded-lg bg-emerald-600 text-white px-4 py-2 text-sm font-medium hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+                    >
+                      {confirming === num ? "..." : "Confirmar pago"}
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>

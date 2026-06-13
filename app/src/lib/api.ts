@@ -56,6 +56,20 @@ export async function undoConfirmNumber(
   return { success: true }
 }
 
+export async function cancelReservation(
+  num: string,
+  token: string
+): Promise<{ success: boolean }> {
+  const res = await fetch(`/api/numbers/${num}?token=${token}&action=cancel`, {
+    method: "PUT",
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}))
+    throw new Error(body.error ?? "Error al cancelar")
+  }
+  return { success: true }
+}
+
 export async function exportCsv(token: string): Promise<Blob> {
   const res = await fetch(`/api/export?token=${token}`)
   if (!res.ok) throw new Error("Error al exportar")

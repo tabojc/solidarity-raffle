@@ -10,6 +10,7 @@ vi.mock('@/lib/kv', () => ({
   adminReserveNumber: vi.fn(),
   confirmNumber: vi.fn(),
   undoConfirmNumber: vi.fn(),
+  cancelReservation: vi.fn(),
   getNumber: vi.fn(),
 }))
 
