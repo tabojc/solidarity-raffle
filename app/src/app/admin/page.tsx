@@ -148,16 +148,16 @@ export default function AdminPage() {
           onSubmit={handleLogin}
           className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-6 space-y-4"
         >
-          <h1 className="text-xl font-bold text-zinc-800">Admin</h1>
+          <h1 className="text-xl font-bold text-zinc-800">Oficina</h1>
           <div>
             <label className="block text-sm font-medium text-zinc-700 mb-1">
-              Token de acceso
+              Clave secreta
             </label>
             <input
               value={token}
               onChange={(e) => setToken(e.target.value)}
               className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              placeholder="Ingresa el token"
+              placeholder="Ingresa la clave"
               type="password"
             />
           </div>
@@ -194,7 +194,7 @@ export default function AdminPage() {
     <div className="min-h-screen bg-zinc-50">
       <header className="bg-white border-b border-zinc-200 px-4 py-3 flex items-center justify-between">
         <h1 className="font-semibold text-zinc-800">
-          Admin — {config?.name ?? "Rifa"}
+          Oficina — {config?.name ?? "Rifa"}
         </h1>
         <div className="flex gap-2">
           <button
