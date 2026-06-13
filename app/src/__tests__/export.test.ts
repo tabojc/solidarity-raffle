@@ -5,6 +5,12 @@ const mockGetAllNumbers = vi.fn()
 
 vi.mock('@/lib/kv', () => ({
   getAllNumbers: mockGetAllNumbers,
+  reserveNumber: vi.fn(),
+  adminReserveNumber: vi.fn(),
+  confirmNumber: vi.fn(),
+  undoConfirmNumber: vi.fn(),
+  getNumber: vi.fn(),
+  getConfig: vi.fn(),
 }))
 
 const ADMIN_TOKEN = 'test-admin-token-456'

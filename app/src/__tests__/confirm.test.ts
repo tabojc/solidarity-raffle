@@ -2,12 +2,15 @@ import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest'
 
 const mockGetNumber = vi.fn()
 const mockConfirmNumber = vi.fn()
+const mockUndoConfirmNumber = vi.fn()
 
 vi.mock('@/lib/kv', () => ({
   getNumber: mockGetNumber,
   confirmNumber: mockConfirmNumber,
+  undoConfirmNumber: mockUndoConfirmNumber,
   getAllNumbers: vi.fn(),
   reserveNumber: vi.fn(),
+  adminReserveNumber: vi.fn(),
   getConfig: vi.fn(),
 }))
 
@@ -71,6 +74,41 @@ describe('PUT /api/numbers/[num]', () => {
     const { PUT } = await import('@/app/api/numbers/[num]/route')
     const request = new Request(
       `http://localhost/api/numbers/00?token=${ADMIN_TOKEN}`,
+      { method: 'PUT' }
+    )
+    const response = await PUT(request, { params: Promise.resolve({ num: '00' }) })
+
+    expect(response.status).toBe(409)
+  })
+
+  it('undoes a sold number with action=undo', async () => {
+    const undone = {
+      status: 'reserved' as const,
+      reservedBy: 'Juan',
+      reservedAt: 1718100000000,
+      confirmedAt: null,
+    }
+    mockUndoConfirmNumber.mockResolvedValue(undone)
+
+    const { PUT } = await import('@/app/api/numbers/[num]/route')
+    const request = new Request(
+      `http://localhost/api/numbers/01?token=${ADMIN_TOKEN}&action=undo`,
+      { method: 'PUT' }
+    )
+    const response = await PUT(request, { params: Promise.resolve({ num: '01' }) })
+    const body = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(body).toEqual(undone)
+    expect(mockUndoConfirmNumber).toHaveBeenCalledWith('01')
+  })
+
+  it('returns 409 if undoing an unreserved number', async () => {
+    mockUndoConfirmNumber.mockResolvedValue(null)
+
+    const { PUT } = await import('@/app/api/numbers/[num]/route')
+    const request = new Request(
+      `http://localhost/api/numbers/00?token=${ADMIN_TOKEN}&action=undo`,
       { method: 'PUT' }
     )
     const response = await PUT(request, { params: Promise.resolve({ num: '00' }) })

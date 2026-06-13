@@ -20,14 +20,18 @@ const mockNumbers: NumbersMap = {
 const mockGetAllNumbers = vi.fn()
 const mockGetNumber = vi.fn()
 const mockReserveNumber = vi.fn()
+const mockAdminReserveNumber = vi.fn()
 const mockConfirmNumber = vi.fn()
+const mockUndoConfirmNumber = vi.fn()
 const mockGetConfig = vi.fn()
 
 vi.mock('@/lib/kv', () => ({
   getAllNumbers: mockGetAllNumbers,
   getNumber: mockGetNumber,
   reserveNumber: mockReserveNumber,
+  adminReserveNumber: mockAdminReserveNumber,
   confirmNumber: mockConfirmNumber,
+  undoConfirmNumber: mockUndoConfirmNumber,
   getConfig: mockGetConfig,
 }))
 

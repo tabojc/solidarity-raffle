@@ -5,6 +5,12 @@ const mockGetConfig = vi.fn()
 
 vi.mock('@/lib/kv', () => ({
   getConfig: mockGetConfig,
+  getAllNumbers: vi.fn(),
+  reserveNumber: vi.fn(),
+  adminReserveNumber: vi.fn(),
+  confirmNumber: vi.fn(),
+  undoConfirmNumber: vi.fn(),
+  getNumber: vi.fn(),
 }))
 
 beforeEach(() => {
