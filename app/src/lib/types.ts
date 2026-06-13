@@ -5,11 +5,13 @@ export interface RaffleNumber {
   reservedBy: string | null
   reservedAt: number | null
   confirmedAt: number | null
+  note?: string | null
 }
 
 export interface RaffleConfig {
   name: string
   beneficiary: string
+  heroImageUrl: string
   prizes: { position: number; amount: number }[]
   ticketPrice: number
   drawDate: string
