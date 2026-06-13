@@ -36,7 +36,7 @@ function NumberCell({
     <button
       onClick={() => data.status === "available" && onSelect(num)}
       disabled={data.status !== "available"}
-      className={`relative flex flex-col items-center justify-center rounded-lg border-2 p-2 text-sm font-semibold transition-all ${style}`}
+      className={`relative flex flex-col items-center justify-center rounded-lg border-2 p-2 text-sm font-semibold transition-all min-h-[44px] min-w-[44px] ${style}`}
       title={statusLabels[data.status]}
     >
       <span className="text-lg leading-tight">{num}</span>

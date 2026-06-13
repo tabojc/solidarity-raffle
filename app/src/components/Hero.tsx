@@ -20,6 +20,13 @@ export default function Hero({ config }: HeroProps) {
   return (
     <header className="bg-gradient-to-br from-emerald-600 to-emerald-800 text-white px-4 py-10 md:py-14">
       <div className="max-w-2xl mx-auto text-center space-y-4">
+        {config.heroImageUrl && (
+          <img
+            src={config.heroImageUrl}
+            alt={config.beneficiary}
+            className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover mx-auto border-4 border-white/30 shadow-lg"
+          />
+        )}
         <h1 className="text-2xl md:text-4xl font-bold tracking-tight">
           {config.name}
         </h1>

@@ -31,8 +31,14 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect */
     loadData()
-  }, [loadData])
+    /* eslint-enable react-hooks/set-state-in-effect */
+    const interval = setInterval(() => {
+      if (selected === null) loadData()
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [loadData, selected])
 
   async function handleSuccess() {
     setSelected(null)
@@ -74,6 +80,7 @@ export default function Home() {
       </footer>
       <ReserveModal
         num={selected}
+        config={config}
         onClose={() => setSelected(null)}
         onSuccess={handleSuccess}
       />

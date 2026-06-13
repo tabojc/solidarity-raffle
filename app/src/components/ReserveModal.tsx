@@ -2,15 +2,18 @@
 
 import { useState, useRef, useEffect } from "react"
 import { reserveNumber } from "@/lib/api"
+import type { RaffleConfig } from "@/lib/types"
 
 interface ReserveModalProps {
   num: string | null
+  config: RaffleConfig | null
   onClose: () => void
   onSuccess: () => void
 }
 
 export default function ReserveModal({
   num,
+  config,
   onClose,
   onSuccess,
 }: ReserveModalProps) {
@@ -23,15 +26,18 @@ export default function ReserveModal({
 
   useEffect(() => {
     if (num) {
+      /* eslint-disable react-hooks/set-state-in-effect */
       setName("")
       setPhone("")
       setError(null)
       setDone(false)
+      /* eslint-enable react-hooks/set-state-in-effect */
       setTimeout(() => inputRef.current?.focus(), 100)
     }
   }, [num])
 
   if (!num) return null
+  const number = num
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -40,7 +46,7 @@ export default function ReserveModal({
     setSending(true)
     setError(null)
     try {
-      await reserveNumber(num, contact || undefined)
+      await reserveNumber(number, contact || undefined)
       setDone(true)
       setTimeout(() => {
         onSuccess()
@@ -120,7 +126,7 @@ export default function ReserveModal({
               </button>
 
               <p className="text-xs text-zinc-400 text-center">
-                Tienes 24h para confirmar el pago
+                Tienes {config?.reserveTimeoutHours ?? 24}h para confirmar el pago
               </p>
             </form>
           </>

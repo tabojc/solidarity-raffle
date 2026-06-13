@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 import { getAllNumbers } from '@/lib/kv'
+import { rateLimit } from '@/lib/rate-limit'
 
 function isAuthorized(request: Request): boolean {
   const { searchParams } = new URL(request.url)
@@ -31,7 +33,19 @@ function toCsv(numbers: Record<string, { status: string; reservedBy: string | nu
   return [header, ...rows].join('\n')
 }
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for") ?? "anonymous"
+  const { allowed, retryAfter } = rateLimit(ip, 5, 60_000)
+  if (!allowed) {
+    return NextResponse.json(
+      { error: "Demasiadas solicitudes. Intenta de nuevo en unos segundos." },
+      {
+        status: 429,
+        headers: { "retry-after": String(retryAfter) },
+      }
+    )
+  }
+
   if (!isAuthorized(request)) {
     return NextResponse.json(
       { error: 'Unauthorized' },
