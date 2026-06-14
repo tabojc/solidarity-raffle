@@ -60,7 +60,7 @@ export default function Home() {
           <p className="text-red-600">{error}</p>
           <button
             onClick={loadData}
-            className="rounded-lg bg-emerald-600 text-white px-4 py-2 text-sm hover:bg-emerald-700"
+            className="rounded-lg bg-primary text-white px-4 py-2 text-sm hover:bg-primary-dark"
           >
             Reintentar
           </button>
@@ -76,7 +76,54 @@ export default function Home() {
         <NumberGrid numbers={numbers} onSelect={setSelected} />
       </main>
       <footer className="text-center text-xs text-zinc-400 py-6">
-        {config?.lottery} — {config?.drawDate}
+        <p>
+          Hecho con ❤️ por{" "}
+          <a
+            href="https://github.com/tabojc"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-zinc-500 hover:text-zinc-700 transition-colors"
+          >
+            Juan Taborda
+          </a>
+        </p>
+        <p className="mt-1 space-x-2">
+          <a
+            href="https://www.linkedin.com/in/juantaborda/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-zinc-700 transition-colors"
+          >
+            LinkedIn
+          </a>
+          <span className="text-zinc-300">·</span>
+          <a
+            href="https://wa.me/5841754960"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-zinc-700 transition-colors"
+          >
+            WhatsApp
+          </a>
+          <span className="text-zinc-300">·</span>
+          <a
+            href="https://twitter.com/tabojc"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-zinc-700 transition-colors"
+          >
+            𝕏
+          </a>
+          <span className="text-zinc-300">·</span>
+          <a
+            href="https://github.com/tabojc"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-zinc-700 transition-colors"
+          >
+            GitHub
+          </a>
+        </p>
       </footer>
       <ReserveModal
         num={selected}
