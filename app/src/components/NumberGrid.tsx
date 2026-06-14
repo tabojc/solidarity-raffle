@@ -11,7 +11,7 @@ const statusStyles: Record<NumberStatus, string> = {
   available:
     "bg-available-bg border-available-border text-available hover:bg-available hover:text-white",
   reserved:
-    "bg-reserved-bg border-reserved-border text-reserved cursor-not-allowed",
+    "bg-reserved text-white cursor-not-allowed",
   sold: "bg-sold-bg border-sold-border text-sold cursor-not-allowed",
 }
 
@@ -61,7 +61,7 @@ export default function NumberGrid({ numbers, onSelect }: NumberGridProps) {
           Disponible
         </span>
         <span className="flex items-center gap-1">
-          <span className="w-3 h-3 rounded bg-reserved" />
+          <span className="w-3 h-3 rounded border-2 border-reserved bg-transparent" />
           Reservado
         </span>
         <span className="flex items-center gap-1">
