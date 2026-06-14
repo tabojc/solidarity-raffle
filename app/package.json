@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "seed": "dotenv -e .env.local -- tsx scripts/seed.ts"
+    "seed:config": "dotenv -e .env.local -- tsx scripts/seed.ts",
+    "seed:reset": "dotenv -e .env.local -- tsx scripts/seed.ts --reset"
   },
   "dependencies": {
     "@upstash/redis": "^1.38.0",
