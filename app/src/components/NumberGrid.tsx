@@ -57,15 +57,15 @@ export default function NumberGrid({ numbers, onSelect }: NumberGridProps) {
 
       <div className="flex gap-4 mb-4 text-sm text-zinc-600">
         <span className="flex items-center gap-1">
-          <span className="w-3 h-3 rounded bg-available-bg border border-available-border" />
+          <span className="w-3 h-3 rounded bg-available" />
           Disponible
         </span>
         <span className="flex items-center gap-1">
-          <span className="w-3 h-3 rounded bg-reserved-bg border border-reserved-border" />
+          <span className="w-3 h-3 rounded bg-reserved" />
           Reservado
         </span>
         <span className="flex items-center gap-1">
-          <span className="w-3 h-3 rounded bg-sold-bg border border-sold-border" />
+          <span className="w-3 h-3 rounded bg-sold" />
           Vendido
         </span>
       </div>

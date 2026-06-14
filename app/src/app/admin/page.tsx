@@ -169,14 +169,14 @@ export default function AdminPage() {
             <input
               value={token}
               onChange={(e) => setToken(e.target.value)}
-              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               placeholder="Ingresa la clave"
               type="password"
             />
           </div>
           <button
             type="submit"
-            className="w-full rounded-lg bg-emerald-600 text-white py-2.5 font-medium hover:bg-emerald-700"
+            className="w-full rounded-lg bg-primary text-white py-2.5 font-medium hover:bg-primary-dark"
           >
             Ingresar
           </button>
@@ -226,12 +226,12 @@ export default function AdminPage() {
       </header>
 
       <main className="max-w-3xl mx-auto px-4 py-6 space-y-6">
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="bg-white rounded-xl p-4 shadow-sm border border-zinc-200">
             <p className="text-xs text-zinc-500 uppercase tracking-wide">
               Disponibles
             </p>
-            <p className="text-2xl font-bold text-emerald-600">
+            <p className="text-2xl font-bold text-primary">
               {availableCount}
             </p>
           </div>
@@ -253,8 +253,8 @@ export default function AdminPage() {
             <p className="text-xs text-zinc-500 uppercase tracking-wide">
               Total vendido
             </p>
-            <p className="text-2xl font-bold text-emerald-600">
-              Bs. {totalSold.toLocaleString("es-VE")}
+            <p className="text-2xl font-bold text-primary">
+              $ {totalSold.toLocaleString("en-US")}
             </p>
           </div>
         </div>
@@ -271,7 +271,7 @@ export default function AdminPage() {
               <input
                 value={reserveNum}
                 onChange={(e) => setReserveNum(e.target.value)}
-                className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 placeholder="Ej: 42"
               />
             </div>
@@ -282,7 +282,7 @@ export default function AdminPage() {
               <input
                 value={reserveName}
                 onChange={(e) => setReserveName(e.target.value)}
-                className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 placeholder="Nombre y apellido"
               />
             </div>
@@ -339,7 +339,7 @@ export default function AdminPage() {
                     <button
                       onClick={() => setConfirmModal(num)}
                       disabled={confirming === num}
-                      className="rounded-lg bg-emerald-600 text-white px-4 py-2 text-sm font-medium hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+                      className="rounded-lg bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary-dark disabled:opacity-50 transition-colors"
                     >
                       {confirming === num ? "..." : "Confirmar pago"}
                     </button>
@@ -422,7 +422,7 @@ export default function AdminPage() {
               </button>
               <button
                 onClick={() => handleConfirm(confirmModal)}
-                className="rounded-lg bg-emerald-600 text-white px-4 py-2 text-sm font-medium hover:bg-emerald-700 transition-colors"
+                className="rounded-lg bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary-dark transition-colors"
               >
                 Confirmar pago
               </button>
