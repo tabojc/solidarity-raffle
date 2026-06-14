@@ -17,19 +17,24 @@ async function seed() {
     process.exit(1)
   }
 
-  const numbers: Record<string, Record<string, unknown>> = {}
-  for (let i = 0; i < 100; i++) {
-    const key = i.toString().padStart(2, '0')
-    numbers[key] = {
-      status: 'available',
-      reservedBy: null,
-      reservedAt: null,
-      confirmedAt: null,
+  const existingNumbers = await kv.hlen('raffle:numbers')
+  if (existingNumbers && existingNumbers > 0 && !process.argv.includes('--force')) {
+    console.log(`✓ Skipped numbers reset (${existingNumbers} numbers exist). Use --force to re-seed.`)
+  } else {
+    const numbers: Record<string, Record<string, unknown>> = {}
+    for (let i = 0; i < 100; i++) {
+      const key = i.toString().padStart(2, '0')
+      numbers[key] = {
+        status: 'available',
+        reservedBy: null,
+        reservedAt: null,
+        confirmedAt: null,
+      }
     }
-  }
 
-  await kv.hset('raffle:numbers', numbers)
-  console.log('✓ Seeded 100 numbers (00-99) as available')
+    await kv.hset('raffle:numbers', numbers)
+    console.log('✓ Seeded 100 numbers (00-99) as available')
+  }
 
   await kv.hset('raffle:config', {
     name: getEnv('RAFFLE_NAME', 'Rifa Solidaria'),
