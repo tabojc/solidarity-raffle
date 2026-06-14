@@ -12,7 +12,7 @@ const statusStyles: Record<NumberStatus, string> = {
     "bg-available-bg border-available-border text-available hover:bg-available hover:text-white",
   reserved:
     "bg-reserved text-white cursor-not-allowed",
-  sold: "bg-sold-bg border-sold-border text-sold cursor-not-allowed",
+  sold:     "bg-sold-bg border-sold-border text-sold cursor-not-allowed line-through decoration-2",
 }
 
 const statusLabels: Record<NumberStatus, string> = {
