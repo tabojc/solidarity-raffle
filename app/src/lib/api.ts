@@ -95,6 +95,9 @@ export async function exportCsv(token: string): Promise<Blob> {
 
 export async function generateImage(): Promise<Blob> {
   const res = await fetch("/api/raffle-image?refresh=1")
-  if (!res.ok) throw new Error("Error al generar imagen")
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}))
+    throw new Error(body.error ?? `Error al generar imagen (${res.status})`)
+  }
   return res.blob()
 }

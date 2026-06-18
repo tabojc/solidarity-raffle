@@ -250,7 +250,7 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-zinc-50">
-      <header className="bg-white border-b border-zinc-200 px-4 py-3 flex items-center justify-between">
+      <header className="bg-white border-b border-zinc-200 px-4 py-3 flex items-center justify-center">
         <div className="flex gap-2">
           <button
             onClick={handleExport}
@@ -356,7 +356,7 @@ export default function AdminPage() {
               {reserved.map(([num, data]) => (
                 <div
                   key={num}
-                  className="bg-white rounded-xl p-4 shadow-sm border border-zinc-200 flex items-center justify-between"
+                  className="bg-white rounded-xl p-4 shadow-sm border border-zinc-200 flex flex-col"
                 >
                   <div>
                     <p className="text-lg font-bold text-zinc-800">{num}</p>
@@ -414,7 +414,7 @@ export default function AdminPage() {
                       <p className="text-xs text-zinc-400 italic">{data.note}</p>
                     )}
                   </div>
-                  <div className="flex gap-2 items-center">
+                  <div className="flex gap-2 items-center justify-end mt-3">
                     <button
                       onClick={() => {
                         if (window.confirm(`¿Cancelar reserva del número ${num}?`)) {
@@ -449,7 +449,7 @@ export default function AdminPage() {
               {sold.map(([num, data]) => (
                 <div
                   key={num}
-                  className="bg-white rounded-xl p-4 shadow-sm border border-zinc-200 flex items-center justify-between"
+                  className="bg-white rounded-xl p-4 shadow-sm border border-zinc-200 flex flex-col"
                 >
                   <div>
                     <p className="text-lg font-bold text-zinc-800">{num}</p>
@@ -505,7 +505,7 @@ export default function AdminPage() {
                       </p>
                     )}
                   </div>
-                  <div className="flex gap-2 items-center">
+                  <div className="flex gap-2 items-center justify-end mt-3">
                     <span className="text-sm text-red-600 font-medium">
                       Vendido
                     </span>

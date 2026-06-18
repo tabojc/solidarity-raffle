@@ -30,6 +30,7 @@ function toRows(numbers: NumbersMap): { num: string; status: string }[][] {
 }
 
 export async function GET(request: Request) {
+  const t0 = performance.now()
   try {
     const refresh = new URL(request.url).searchParams.get('refresh') === '1'
     if (!refresh) {
@@ -46,11 +47,15 @@ export async function GET(request: Request) {
     if (!config) {
       return NextResponse.json({ error: 'Raffle not configured' }, { status: 500 })
     }
+    const t1 = performance.now()
+    console.log(`[raffle-image] data fetch: ${(t1 - t0).toFixed(0)}ms`)
 
     let heroBuf: Buffer | null = null
     if (config.heroImageUrl) {
       const filePath = join(process.cwd(), 'public', config.heroImageUrl.replace(/^\//, ''))
-      try { heroBuf = readFileSync(filePath) } catch {}
+      try { heroBuf = readFileSync(filePath) } catch {
+        console.error(`[raffle-image] hero file not found: ${filePath}`)
+      }
     }
 
     const fonts = loadFont()
@@ -135,25 +140,35 @@ export async function GET(request: Request) {
       </div>,
       { width: 540, height: 960, fonts },
     )
+    const t2 = performance.now()
+    console.log(`[raffle-image] satori: ${(t2 - t1).toFixed(0)}ms`)
 
     let pngBuffer = new Resvg(svg, { fitTo: { mode: 'width', value: 540 } }).render().asPng()
+    const t3 = performance.now()
+    console.log(`[raffle-image] resvg: ${(t3 - t2).toFixed(0)}ms`)
 
     if (heroBuf) {
-      const circleSvg = Buffer.from('<svg><circle cx="100" cy="100" r="100" fill="white"/></svg>')
-      const heroCircular = await sharp(heroBuf)
-        .resize(200, 200, { fit: 'cover' })
-        .composite([{ input: circleSvg, blend: 'dest-in' }])
-        .png()
-        .toBuffer()
+      try {
+        const circleSvg = Buffer.from('<svg><circle cx="100" cy="100" r="100" fill="white"/></svg>')
+        const heroCircular = await sharp(heroBuf)
+          .resize(200, 200, { fit: 'cover' })
+          .composite([{ input: circleSvg, blend: 'dest-in' }])
+          .png()
+          .toBuffer()
 
-      pngBuffer = await sharp(pngBuffer)
-        .composite([{ input: heroCircular, top: 34, left: 16 }])
-        .png()
-        .toBuffer()
+        pngBuffer = await sharp(pngBuffer)
+          .composite([{ input: heroCircular, top: 34, left: 16 }])
+          .png()
+          .toBuffer()
+      } catch (heroErr) {
+        console.error('[raffle-image] hero compositing failed, skipping:', heroErr)
+      }
     }
+    const t4 = performance.now()
+    console.log(`[raffle-image] sharp: ${(t4 - t3).toFixed(0)}ms`)
 
     const base64 = pngBuffer.toString('base64')
-    void setImageCache(base64)
+    await setImageCache(base64)
 
     return new NextResponse(new Uint8Array(pngBuffer), {
       headers: { 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=3600' },

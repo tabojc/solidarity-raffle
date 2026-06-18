@@ -117,7 +117,7 @@ export async function reserveNumber(
 
   if (!ok) return null
 
-  void clearImageCache()
+  await clearImageCache()
 
   return {
     status: 'reserved',
@@ -141,7 +141,7 @@ export async function adminReserveNumber(
   }
 
   await kv.hset(NUMBERS_KEY, { [num]: updated })
-  void clearImageCache()
+  await clearImageCache()
   return updated
 }
 
@@ -157,7 +157,7 @@ export async function confirmNumber(num: string): Promise<RaffleNumber | null> {
   }
 
   await kv.hset(NUMBERS_KEY, { [num]: updated })
-  void clearImageCache()
+  await clearImageCache()
   return updated
 }
 
@@ -173,7 +173,7 @@ export async function undoConfirmNumber(num: string): Promise<RaffleNumber | nul
   }
 
   await kv.hset(NUMBERS_KEY, { [num]: updated })
-  void clearImageCache()
+  await clearImageCache()
   return updated
 }
 
@@ -188,7 +188,7 @@ export async function renameNumber(num: string, newName: string): Promise<Raffle
   }
 
   await kv.hset(NUMBERS_KEY, { [num]: updated })
-  void clearImageCache()
+  await clearImageCache()
   return updated
 }
 
@@ -205,7 +205,7 @@ export async function cancelReservation(num: string): Promise<RaffleNumber | nul
   }
 
   await kv.hset(NUMBERS_KEY, { [num]: updated })
-  void clearImageCache()
+  await clearImageCache()
   return updated
 }
 
