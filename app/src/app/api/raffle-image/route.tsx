@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server'
 import satori from 'satori'
-import { Resvg } from '@resvg/resvg-js'
-import sharp from 'sharp'
 import { getAllNumbers, getConfig, getImageCache, setImageCache } from '@/lib/kv'
 import type { NumbersMap } from '@/lib/types'
 import { readFileSync } from 'fs'
 import { join } from 'path'
+
+// Native modules (sharp, @resvg/resvg-js) are imported dynamically inside the
+// handler so their native binary failures are caught by our try/catch and
+// reported clearly instead of crashing the module load at import time.
 
 const CELL = 49
 const GAP = 2
@@ -31,6 +33,25 @@ function toRows(numbers: NumbersMap): { num: string; status: string }[][] {
 
 export async function GET(request: Request) {
   const t0 = performance.now()
+
+  // --- dynamic native module init ---
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let Resvg: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let sharp: any
+  try {
+    ;({ Resvg } = await import('@resvg/resvg-js'))
+    sharp = (await import('sharp')).default
+  } catch (nativeErr) {
+    const msg = nativeErr instanceof Error ? nativeErr.message : String(nativeErr)
+    console.error('[raffle-image] native module init failed:', nativeErr)
+    return NextResponse.json({
+      error: 'Image generation unavailable — native modules failed to load',
+      detail: msg,
+    }, { status: 500 })
+  }
+  // --- end native module init ---
+
   try {
     const refresh = new URL(request.url).searchParams.get('refresh') === '1'
     if (!refresh) {
@@ -174,8 +195,13 @@ export async function GET(request: Request) {
       headers: { 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=3600' },
     })
   } catch (error) {
-    console.error('Error generating raffle image:', error)
+    console.error('[raffle-image] Error generating raffle image:', error)
     const msg = error instanceof Error ? error.message : String(error)
-    return NextResponse.json({ error: msg }, { status: 500 })
+    const stack = error instanceof Error ? error.stack : undefined
+    return NextResponse.json({
+      error: msg,
+      ...(stack ? { stack: stack.split('\n').slice(0, 6).join('\n') } : {}),
+      t: performance.now() - t0,
+    }, { status: 500 })
   }
 }

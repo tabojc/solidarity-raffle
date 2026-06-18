@@ -11,6 +11,9 @@ importers:
       '@resvg/resvg-js':
         specifier: ^2.6.2
         version: 2.6.2
+      '@resvg/resvg-js-linux-arm64-gnu':
+        specifier: ^2.6.2
+        version: 2.6.2
       '@resvg/resvg-js-linux-x64-gnu':
         specifier: ^2.6.2
         version: 2.6.2
@@ -814,7 +817,6 @@ packages:
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   '@resvg/resvg-js-linux-arm64-musl@2.6.2':
     resolution: {integrity: sha512-3h3dLPWNgSsD4lQBJPb4f+kvdOSJHa5PjTYVsWHxLUzH4IFTJUAnmuWpw4KqyQ3NA5QCyhw4TWgxk3jRkQxEKg==}
@@ -3353,8 +3355,7 @@ snapshots:
   '@resvg/resvg-js-linux-arm-gnueabihf@2.6.2':
     optional: true
 
-  '@resvg/resvg-js-linux-arm64-gnu@2.6.2':
-    optional: true
+  '@resvg/resvg-js-linux-arm64-gnu@2.6.2': {}
 
   '@resvg/resvg-js-linux-arm64-musl@2.6.2':
     optional: true
