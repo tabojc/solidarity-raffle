@@ -34,22 +34,40 @@ function toRows(numbers: NumbersMap): { num: string; status: string }[][] {
 export async function GET(request: Request) {
   const t0 = performance.now()
 
-  // --- dynamic native module init ---
+  // --- dynamic native module init with individual error handling ---
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let Resvg: any
+  let Resvg: any = null
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let sharp: any
+  let sharp: any = null
+  let sharpError: unknown = null
+  let resvgError: unknown = null
+
+  try {
+    sharp = (await import('sharp')).default
+  } catch (err) {
+    sharpError = err
+    console.error('[raffle-image] sharp import failed:', err)
+  }
+
   try {
     ;({ Resvg } = await import('@resvg/resvg-js'))
-    sharp = (await import('sharp')).default
-  } catch (nativeErr) {
-    const msg = nativeErr instanceof Error ? nativeErr.message : String(nativeErr)
-    console.error('[raffle-image] native module init failed:', nativeErr)
+  } catch (err) {
+    resvgError = err
+    console.error('[raffle-image] resvg import failed:', err)
+  }
+
+  // If resvg failed, we cannot generate the image at all
+  if (!Resvg) {
+    const msg = resvgError instanceof Error ? resvgError.message : String(resvgError)
+    console.error('[raffle-image] resvg module init failed:', resvgError)
     return NextResponse.json({
-      error: 'Image generation unavailable — native modules failed to load',
+      error: 'Image generation unavailable — resvg module failed to load',
       detail: msg,
     }, { status: 500 })
   }
+
+  // Sharp is optional (hero compositing), so we can continue without it
+  // but we'll log if it failed to load
   // --- end native module init ---
 
   try {
@@ -168,7 +186,7 @@ export async function GET(request: Request) {
     const t3 = performance.now()
     console.log(`[raffle-image] resvg: ${(t3 - t2).toFixed(0)}ms`)
 
-    if (heroBuf) {
+    if (heroBuf && sharp) {
       try {
         const circleSvg = Buffer.from('<svg><circle cx="100" cy="100" r="100" fill="white"/></svg>')
         const heroCircular = await sharp(heroBuf)
@@ -184,9 +202,13 @@ export async function GET(request: Request) {
       } catch (heroErr) {
         console.error('[raffle-image] hero compositing failed, skipping:', heroErr)
       }
+    } else if (heroBuf && !sharp) {
+      console.error('[raffle-image] sharp module not available, skipping hero compositing')
     }
     const t4 = performance.now()
-    console.log(`[raffle-image] sharp: ${(t4 - t3).toFixed(0)}ms`)
+    if (sharp) {
+      console.log(`[raffle-image] sharp: ${(t4 - t3).toFixed(0)}ms`)
+    }
 
     const base64 = pngBuffer.toString('base64')
     await setImageCache(base64)
