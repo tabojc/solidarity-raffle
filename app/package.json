@@ -9,13 +9,17 @@
     "lint": "eslint",
     "test": "vitest run",
     "seed:config": "dotenv -e .env.local -- tsx scripts/seed.ts",
-    "seed:reset": "dotenv -e .env.local -- tsx scripts/seed.ts --reset"
+    "seed:reset": "dotenv -e .env.local -- tsx scripts/seed.ts --reset",
+    "seed:backup": "dotenv -e .env.local -- tsx scripts/backup.ts",
+    "seed:restore": "dotenv -e .env.local -- tsx scripts/restore.ts"
   },
   "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@upstash/redis": "^1.38.0",
     "next": "16.2.9",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "satori": "^0.26.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

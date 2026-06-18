@@ -3,6 +3,7 @@ import type { NumbersMap, RaffleConfig, RaffleNumber } from './types'
 
 const NUMBERS_KEY = 'raffle:numbers'
 const CONFIG_KEY = 'raffle:config'
+const IMAGE_CACHE_KEY = 'raffle:image:png'
 
 const RESERVE_SCRIPT = `
   local raw = redis.call("HGET", KEYS[1], ARGV[1])
@@ -116,6 +117,8 @@ export async function reserveNumber(
 
   if (!ok) return null
 
+  void clearImageCache()
+
   return {
     status: 'reserved',
     reservedBy: reservedBy ?? null,
@@ -138,6 +141,7 @@ export async function adminReserveNumber(
   }
 
   await kv.hset(NUMBERS_KEY, { [num]: updated })
+  void clearImageCache()
   return updated
 }
 
@@ -153,6 +157,7 @@ export async function confirmNumber(num: string): Promise<RaffleNumber | null> {
   }
 
   await kv.hset(NUMBERS_KEY, { [num]: updated })
+  void clearImageCache()
   return updated
 }
 
@@ -168,6 +173,7 @@ export async function undoConfirmNumber(num: string): Promise<RaffleNumber | nul
   }
 
   await kv.hset(NUMBERS_KEY, { [num]: updated })
+  void clearImageCache()
   return updated
 }
 
@@ -184,7 +190,23 @@ export async function cancelReservation(num: string): Promise<RaffleNumber | nul
   }
 
   await kv.hset(NUMBERS_KEY, { [num]: updated })
+  void clearImageCache()
   return updated
+}
+
+export async function getImageCache(): Promise<string | null> {
+  const kv = getRedis()
+  return kv.get<string>(IMAGE_CACHE_KEY)
+}
+
+export async function setImageCache(pngBase64: string): Promise<void> {
+  const kv = getRedis()
+  await kv.set(IMAGE_CACHE_KEY, pngBase64, { ex: 3600 })
+}
+
+export async function clearImageCache(): Promise<void> {
+  const kv = getRedis()
+  await kv.del(IMAGE_CACHE_KEY)
 }
 
 export async function getConfig(): Promise<RaffleConfig | null> {
