@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# backups (production data — do not commit)
+backup-*.json
+solo-activos.json

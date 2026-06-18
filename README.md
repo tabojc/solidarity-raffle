@@ -23,10 +23,79 @@ A web app to manage number sales for a solidarity raffle fundraiser. Built with 
 
 ```bash
 pnpm install
+cp app/.env.example app/.env.local  # fill in values
 pnpm dev
 ```
 
 Requires `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` environment variables.
+
+---
+
+## Data Management
+
+### Backup (export Redis to JSON)
+
+```bash
+cd app
+pnpm seed:backup                          # full backup with timestamp
+pnpm seed:backup --active-only            # only reserved/sold numbers
+pnpm seed:backup --output mi-backup.json  # custom filename
+```
+
+### Restore (import JSON to Redis)
+
+```bash
+cd app
+pnpm seed:restore backup.json                  # preview only (dry-run)
+pnpm seed:restore backup.json --interactive    # restore one by one
+pnpm seed:restore backup.json --batch          # restore all at once
+pnpm seed:restore backup.json --batch --force  # skip confirmations
+```
+
+### Seed Config (update raffle settings without touching numbers)
+
+```bash
+cd app
+pnpm seed:config           # safe — only updates config, numbers untouched
+```
+
+### Seed Reset (⚠️ DANGER — deletes all numbers)
+
+```bash
+cd app
+pnpm seed:reset            # resets 100 numbers to available (asks confirmation in prod)
+```
+
+### Pre-sync Checklist
+
+Before any data sync or migration:
+
+1. **Backup first**: `pnpm seed:backup`
+2. **Verify the backup file** exists and has the expected data
+3. **Run the sync** with `--dry-run` or `--interactive` when possible
+4. **Verify after**: check the admin panel to confirm changes
+
+### Backup Files
+
+| File | Description |
+|------|-------------|
+| `backup-produccion.json` | Latest production state |
+| `backup-pre-sync.json` | Snapshot before last sync |
+| `backup-YYYY-MM-DD-HHMMSS.json` | Timestamped backups |
+
+---
+
+## Scripts Reference
+
+| Script | Command | Description |
+|--------|---------|-------------|
+| Dev server | `pnpm dev` | Start development server |
+| Build | `pnpm build` | Production build |
+| Tests | `pnpm test` | Run Vitest tests |
+| Seed config | `pnpm seed:config` | Update raffle config only |
+| Seed reset | `pnpm seed:reset` | Reset all numbers (⚠️ destructive) |
+| Backup | `pnpm seed:backup` | Export Redis to JSON |
+| Restore | `pnpm seed:restore <file>` | Import JSON to Redis |
 
 ## License
 

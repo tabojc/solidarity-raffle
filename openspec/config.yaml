@@ -3,11 +3,11 @@ schema: spec-driven
 context: |
   Project: rifa (Rifa Solidaria)
   Purpose: Raffle app for beneficiary's eye surgery fundraiser
-  Tech stack: Next.js 14+ App Router, TypeScript, React, Vercel KV (Redis)
+  Tech stack: Next.js 16 App Router, React 19, Tailwind CSS 4, TypeScript, Vercel KV (Upstash Redis)
   Architecture: Serverless (Vercel), SPA with API routes, polling for real-time
   Hosting: Vercel (free tier)
-  Storage: Vercel KV (free tier, 30K requests/day)
-  Testing: Vitest (recommended for Next.js)
+  Storage: Vercel KV (Upstash Redis, free tier)
+  Testing: Vitest 4.1.8 (unit + integration tests)
   Style: Mobile-first, responsive, Spanish UI
   Auth: Secret link with token (no login)
   State model: 3 states (available → reserved → sold)

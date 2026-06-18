@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { NextRequest } from 'next/server'
 import type { NumbersMap } from '@/lib/types'
 
 const mockNumbers: NumbersMap = {
@@ -75,7 +76,7 @@ describe('POST /api/numbers', () => {
     mockReserveNumber.mockResolvedValue(reserved)
 
     const { POST } = await import('@/app/api/numbers/route')
-    const request = new Request('http://localhost/api/numbers', {
+    const request = new NextRequest('http://localhost/api/numbers', {
       method: 'POST',
       body: JSON.stringify({ num: '05', reservedBy: 'Juan' }),
       headers: { 'content-type': 'application/json' },
@@ -90,7 +91,7 @@ describe('POST /api/numbers', () => {
 
   it('returns 400 if num is missing', async () => {
     const { POST } = await import('@/app/api/numbers/route')
-    const request = new Request('http://localhost/api/numbers', {
+    const request = new NextRequest('http://localhost/api/numbers', {
       method: 'POST',
       body: JSON.stringify({ reservedBy: 'Juan' }),
       headers: { 'content-type': 'application/json' },
@@ -104,7 +105,7 @@ describe('POST /api/numbers', () => {
     mockReserveNumber.mockResolvedValue(null)
 
     const { POST } = await import('@/app/api/numbers/route')
-    const request = new Request('http://localhost/api/numbers', {
+    const request = new NextRequest('http://localhost/api/numbers', {
       method: 'POST',
       body: JSON.stringify({ num: '01' }),
       headers: { 'content-type': 'application/json' },

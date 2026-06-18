@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
-import { fetchNumbers, fetchConfig, confirmNumber, undoConfirmNumber, cancelReservation, exportCsv, generateImage } from "@/lib/api"
+import { fetchNumbers, fetchConfig, confirmNumber, undoConfirmNumber, cancelReservation, renameNumber, exportCsv, generateImage } from "@/lib/api"
 import type { NumbersMap, RaffleConfig } from "@/lib/types"
 
 export default function AdminPage() {
@@ -13,6 +13,9 @@ export default function AdminPage() {
   const [confirming, setConfirming] = useState<string | null>(null)
   const [undoing, setUndoing] = useState<string | null>(null)
   const [cancelling, setCancelling] = useState<string | null>(null)
+  const [editingName, setEditingName] = useState<string | null>(null)
+  const [editNameValue, setEditNameValue] = useState("")
+  const [renaming, setRenaming] = useState<string | null>(null)
 
   const [confirmModal, setConfirmModal] = useState<string | null>(null)
   const [reserveNum, setReserveNum] = useState("")
@@ -89,6 +92,34 @@ export default function AdminPage() {
     } finally {
       setUndoing(null)
     }
+  }
+
+  async function handleSaveName(num: string) {
+    const trimmed = editNameValue.trim()
+    if (!trimmed || trimmed === numbers[num]?.reservedBy) {
+      setEditingName(null)
+      return
+    }
+    setRenaming(num)
+    try {
+      await renameNumber(num, token, trimmed)
+      await loadData()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Error al renombrar")
+    } finally {
+      setRenaming(null)
+      setEditingName(null)
+    }
+  }
+
+  function handleCancelEdit() {
+    setEditingName(null)
+    setEditNameValue("")
+  }
+
+  function handleStartEdit(num: string, currentName: string) {
+    setEditingName(num)
+    setEditNameValue(currentName)
   }
 
   async function handleCancelReservation(num: string) {
@@ -330,7 +361,49 @@ export default function AdminPage() {
                   <div>
                     <p className="text-lg font-bold text-zinc-800">{num}</p>
                     {data.reservedBy && (
-                      <p className="text-sm text-zinc-500">{data.reservedBy}</p>
+                      <div className="flex items-center gap-2">
+                        {editingName === num ? (
+                          <div className="flex items-center gap-1">
+                            <input
+                              value={editNameValue}
+                              onChange={(e) => setEditNameValue(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") handleSaveName(num)
+                                if (e.key === "Escape") handleCancelEdit()
+                              }}
+                              className="w-40 rounded border border-zinc-300 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                              autoFocus
+                            />
+                            <button
+                              onClick={() => handleSaveName(num)}
+                              disabled={renaming === num}
+                              className="text-xs text-primary hover:underline disabled:opacity-50"
+                            >
+                              {renaming === num ? "..." : "Guardar"}
+                            </button>
+                            <button
+                              onClick={handleCancelEdit}
+                              className="text-xs text-zinc-500 hover:underline"
+                            >
+                              Cancelar
+                            </button>
+                          </div>
+                        ) : (
+                          <>
+                            <p className="text-sm text-zinc-500">{data.reservedBy}</p>
+                            <button
+                              onClick={() => handleStartEdit(num, data.reservedBy!)}
+                              className="text-zinc-400 hover:text-primary transition-colors"
+                              title="Editar nombre"
+                              aria-label="Editar nombre"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                              </svg>
+                            </button>
+                          </>
+                        )}
+                      </div>
                     )}
                     {data.reservedAt && (
                       <p className="text-xs text-zinc-400">
@@ -358,7 +431,7 @@ export default function AdminPage() {
                       disabled={confirming === num}
                       className="rounded-lg bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary-dark disabled:opacity-50 transition-colors"
                     >
-                      {confirming === num ? "..." : "Confirmar pago"}
+                      {confirming === num ? "..." : "Confirmar"}
                     </button>
                   </div>
                 </div>
@@ -381,7 +454,49 @@ export default function AdminPage() {
                   <div>
                     <p className="text-lg font-bold text-zinc-800">{num}</p>
                     {data.reservedBy && (
-                      <p className="text-sm text-zinc-500">{data.reservedBy}</p>
+                      <div className="flex items-center gap-2">
+                        {editingName === num ? (
+                          <div className="flex items-center gap-1">
+                            <input
+                              value={editNameValue}
+                              onChange={(e) => setEditNameValue(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") handleSaveName(num)
+                                if (e.key === "Escape") handleCancelEdit()
+                              }}
+                              className="w-40 rounded border border-zinc-300 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                              autoFocus
+                            />
+                            <button
+                              onClick={() => handleSaveName(num)}
+                              disabled={renaming === num}
+                              className="text-xs text-primary hover:underline disabled:opacity-50"
+                            >
+                              {renaming === num ? "..." : "Guardar"}
+                            </button>
+                            <button
+                              onClick={handleCancelEdit}
+                              className="text-xs text-zinc-500 hover:underline"
+                            >
+                              Cancelar
+                            </button>
+                          </div>
+                        ) : (
+                          <>
+                            <p className="text-sm text-zinc-500">{data.reservedBy}</p>
+                            <button
+                              onClick={() => handleStartEdit(num, data.reservedBy!)}
+                              className="text-zinc-400 hover:text-primary transition-colors"
+                              title="Editar nombre"
+                              aria-label="Editar nombre"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                              </svg>
+                            </button>
+                          </>
+                        )}
+                      </div>
                     )}
                     {data.confirmedAt && (
                       <p className="text-xs text-zinc-400">
@@ -423,7 +538,7 @@ export default function AdminPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
             <h3 className="text-lg font-semibold text-zinc-800 mb-2">
-              Confirmar pago
+              Confirmar
             </h3>
             <p className="text-zinc-600 mb-4">
               ¿Estás segura de confirmar el pago del número{" "}
@@ -441,7 +556,7 @@ export default function AdminPage() {
                 onClick={() => handleConfirm(confirmModal)}
                 className="rounded-lg bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary-dark transition-colors"
               >
-                Confirmar pago
+                Confirmar
               </button>
             </div>
           </div>

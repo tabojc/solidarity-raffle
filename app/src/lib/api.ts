@@ -56,6 +56,23 @@ export async function undoConfirmNumber(
   return { success: true }
 }
 
+export async function renameNumber(
+  num: string,
+  token: string,
+  reservedBy: string
+): Promise<{ success: boolean }> {
+  const res = await fetch(`/api/numbers/${num}?token=${token}&action=rename`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ reservedBy }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}))
+    throw new Error(body.error ?? "Error al renombrar")
+  }
+  return { success: true }
+}
+
 export async function cancelReservation(
   num: string,
   token: string

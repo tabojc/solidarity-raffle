@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest'
+import { NextRequest } from 'next/server'
 
 const mockGetNumber = vi.fn()
 const mockConfirmNumber = vi.fn()
@@ -36,7 +37,7 @@ describe('PUT /api/numbers/[num]', () => {
     mockConfirmNumber.mockResolvedValue(confirmed)
 
     const { PUT } = await import('@/app/api/numbers/[num]/route')
-    const request = new Request(
+    const request = new NextRequest(
       `http://localhost/api/numbers/01?token=${ADMIN_TOKEN}`,
       { method: 'PUT' }
     )
@@ -50,7 +51,7 @@ describe('PUT /api/numbers/[num]', () => {
 
   it('returns 401 without token', async () => {
     const { PUT } = await import('@/app/api/numbers/[num]/route')
-    const request = new Request('http://localhost/api/numbers/01', {
+    const request = new NextRequest('http://localhost/api/numbers/01', {
       method: 'PUT',
     })
     const response = await PUT(request, { params: Promise.resolve({ num: '01' }) })
@@ -60,7 +61,7 @@ describe('PUT /api/numbers/[num]', () => {
 
   it('returns 401 with invalid token', async () => {
     const { PUT } = await import('@/app/api/numbers/[num]/route')
-    const request = new Request(
+    const request = new NextRequest(
       'http://localhost/api/numbers/01?token=wrong',
       { method: 'PUT' }
     )
@@ -73,7 +74,7 @@ describe('PUT /api/numbers/[num]', () => {
     mockConfirmNumber.mockResolvedValue(null)
 
     const { PUT } = await import('@/app/api/numbers/[num]/route')
-    const request = new Request(
+    const request = new NextRequest(
       `http://localhost/api/numbers/00?token=${ADMIN_TOKEN}`,
       { method: 'PUT' }
     )
@@ -92,7 +93,7 @@ describe('PUT /api/numbers/[num]', () => {
     mockUndoConfirmNumber.mockResolvedValue(undone)
 
     const { PUT } = await import('@/app/api/numbers/[num]/route')
-    const request = new Request(
+    const request = new NextRequest(
       `http://localhost/api/numbers/01?token=${ADMIN_TOKEN}&action=undo`,
       { method: 'PUT' }
     )
@@ -108,7 +109,7 @@ describe('PUT /api/numbers/[num]', () => {
     mockUndoConfirmNumber.mockResolvedValue(null)
 
     const { PUT } = await import('@/app/api/numbers/[num]/route')
-    const request = new Request(
+    const request = new NextRequest(
       `http://localhost/api/numbers/00?token=${ADMIN_TOKEN}&action=undo`,
       { method: 'PUT' }
     )

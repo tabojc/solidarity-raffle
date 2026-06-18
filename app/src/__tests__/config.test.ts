@@ -21,6 +21,7 @@ beforeEach(() => {
 const mockConfig: RaffleConfig = {
   name: 'Rifa Solidaria',
   beneficiary: '[Beneficiary Name]',
+  heroImageUrl: '',
   prizes: [
     { position: 1, amount: 600 },
     { position: 2, amount: 400 },

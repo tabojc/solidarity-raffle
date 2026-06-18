@@ -177,6 +177,21 @@ export async function undoConfirmNumber(num: string): Promise<RaffleNumber | nul
   return updated
 }
 
+export async function renameNumber(num: string, newName: string): Promise<RaffleNumber | null> {
+  const kv = getRedis()
+  const existing = await kv.hget<RaffleNumber>(NUMBERS_KEY, num)
+  if (!existing || existing.status === 'available') return null
+
+  const updated: RaffleNumber = {
+    ...existing,
+    reservedBy: newName,
+  }
+
+  await kv.hset(NUMBERS_KEY, { [num]: updated })
+  void clearImageCache()
+  return updated
+}
+
 export async function cancelReservation(num: string): Promise<RaffleNumber | null> {
   const kv = getRedis()
   const existing = await kv.hget<RaffleNumber>(NUMBERS_KEY, num)

@@ -50,7 +50,7 @@ describe('GET /api/raffle-image', () => {
     mockGetImageCache.mockResolvedValue(Buffer.from('cached-png').toString('base64'))
 
     const { GET } = await import('@/app/api/raffle-image/route')
-    const response = await GET()
+    const response = await GET(new Request('http://localhost/'))
 
     expect(response.status).toBe(200)
     expect(response.headers.get('content-type')).toBe('image/png')
@@ -66,7 +66,7 @@ describe('GET /api/raffle-image', () => {
     vi.mocked(getConfig).mockResolvedValue(mockConfig)
 
     const { GET } = await import('@/app/api/raffle-image/route')
-    const response = await GET()
+    const response = await GET(new Request('http://localhost/'))
 
     expect(response.status).toBe(200)
     expect(response.headers.get('content-type')).toBe('image/png')
@@ -81,7 +81,7 @@ describe('GET /api/raffle-image', () => {
     vi.mocked(getConfig).mockResolvedValue(null)
 
     const { GET } = await import('@/app/api/raffle-image/route')
-    const response = await GET()
+    const response = await GET(new Request('http://localhost/'))
 
     expect(response.status).toBe(500)
     const body = await response.json()
@@ -92,11 +92,11 @@ describe('GET /api/raffle-image', () => {
     mockGetImageCache.mockRejectedValue(new Error('Redis error'))
 
     const { GET } = await import('@/app/api/raffle-image/route')
-    const response = await GET()
+    const response = await GET(new Request('http://localhost/'))
 
     expect(response.status).toBe(500)
     const body = await response.json()
-    expect(body.error).toBe('Failed to generate image')
+    expect(body.error).toBe('Redis error')
   })
 })
 

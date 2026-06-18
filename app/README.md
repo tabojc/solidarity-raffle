@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Rifa Solidaria — App
 
-## Getting Started
-
-First, run the development server:
+## Quick Start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) for the public raffle page.
+Open [http://localhost:3000/admin?token=TOKEN](http://localhost:3000/admin?token=TOKEN) for the admin panel.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Copy `.env.example` to `.env.local` and fill in the values:
 
-## Learn More
+```bash
+cp .env.example .env.local
+```
 
-To learn more about Next.js, take a look at the following resources:
+Required:
+- `UPSTASH_REDIS_REST_URL` — Redis endpoint
+- `UPSTASH_REDIS_REST_TOKEN` — Redis auth token
+- `ADMIN_TOKEN` — Secret token for admin access
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Development server |
+| `pnpm build` | Production build |
+| `pnpm test` | Run tests |
+| `pnpm seed:config` | Update raffle config (safe) |
+| `pnpm seed:reset` | Reset all numbers (⚠️ destructive) |
+| `pnpm seed:backup` | Export Redis data to JSON |
+| `pnpm seed:restore <file>` | Import JSON data to Redis |
 
-## Deploy on Vercel
+## Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/
+├── app/
+│   ├── api/           # Route handlers (numbers, config, export)
+│   ├── admin/         # Admin panel
+│   └── page.tsx       # Public raffle page
+├── components/        # Hero, NumberGrid, ReserveModal
+├── lib/               # KV store, API client, types, rate limiting
+└── __tests__/         # Vitest tests
+scripts/
+├── seed.ts            # Seed config and optionally reset numbers
+├── backup.ts          # Export Redis data to JSON
+└── restore.ts         # Import JSON data to Redis
+```

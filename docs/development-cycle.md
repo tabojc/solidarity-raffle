@@ -66,6 +66,9 @@
 | Commits como unidades de review | Cada commit = 1 tarea atómica. No commits gigantes. |
 | Un agente, un propósito | Investigación con agente de explore, implementación con agente de apply. |
 | La memoria es del equipo | Decisiones, bugs, patrones se guardan. No confiar en la memoria humana. |
+| **Backup antes de sync** | **SIEMPRE** correr `pnpm seed:backup` antes de sincronizar datos externos (listas manuales, migraciones, etc.) |
+| **Nunca seed:reset en producción sin confirmar** | `seed:reset` borra los 100 números. Usar `seed:config` para actualizar solo configuración. |
+| **Validar con la app, no con la lista** | Los datos de la app (timestamps, who reserved) son la fuente de verdad. Las listas manuales pueden tener errores de tipeo o confusión entre personas. |
 
 ### Roles en el ciclo
 

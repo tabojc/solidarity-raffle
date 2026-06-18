@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest'
+import { NextRequest } from 'next/server'
 import type { NumbersMap } from '@/lib/types'
 
 const mockGetAllNumbers = vi.fn()
@@ -45,7 +46,7 @@ describe('GET /api/export', () => {
     mockGetAllNumbers.mockResolvedValue(mockNumbers)
 
     const { GET } = await import('@/app/api/export/route')
-    const request = new Request(
+    const request = new NextRequest(
       `http://localhost/api/export?token=${ADMIN_TOKEN}`
     )
     const response = await GET(request)
@@ -65,7 +66,7 @@ describe('GET /api/export', () => {
 
   it('returns 401 without valid token', async () => {
     const { GET } = await import('@/app/api/export/route')
-    const request = new Request('http://localhost/api/export')
+    const request = new NextRequest('http://localhost/api/export')
     const response = await GET(request)
 
     expect(response.status).toBe(401)

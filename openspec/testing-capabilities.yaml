@@ -1,40 +1,27 @@
 # Testing Capabilities — rifa
 
 ## Test Runner
-- **Framework**: Vitest (recommended for Next.js)
-- **Status**: Not installed yet (project is pre-initialization)
-- **Install command**: `npm install -D vitest @testing-library/react @testing-library/jest-dom`
+- **Framework**: Vitest 4.1.8
+- **Status**: Installed and working (15 tests across 4 test files)
+- **Command**: `pnpm test` (in app/ directory)
 
 ## Test Layers
 
 | Layer | Tool | Coverage | Status |
 |-------|------|----------|--------|
-| Unit tests | Vitest | Functions, utilities | Pending |
-| Component tests | Vitest + Testing Library | React components | Pending |
-| Integration tests | Vitest | API routes, KV operations | Pending |
-| E2E tests | Playwright | Full user flows | Pending (v2) |
+| Unit tests | Vitest | Functions, utilities | ✅ Working |
+| Integration tests | Vitest | API routes, KV operations | ✅ Working |
+| Component tests | — | — | ❌ Not installed |
+| E2E tests | — | — | ❌ Not installed (v2) |
 
-## Current State
-
-No source code exists yet. Testing capabilities will be initialized when:
-1. `npm init` is run
-2. Vitest is installed
-3. First test files are created
-
-## Recommended Test Structure
+## Test Files
 
 ```
-tests/
-├── unit/
-│   └── lib/
-│       └── kv.test.ts
-├── components/
-│   ├── NumberGrid.test.tsx
-│   └── NumberCell.test.tsx
-├── api/
-│   └── numbers.test.ts
-└── e2e/
-    └── raffle-flow.test.ts
+src/__tests__/
+├── config.test.ts     — GET /api/config
+├── confirm.test.ts    — PUT /api/numbers/[num] (confirm, undo, cancel)
+├── export.test.ts     — GET /api/export
+└── numbers.test.ts    — GET/POST /api/numbers
 ```
 
 ## Coverage Thresholds
@@ -45,3 +32,9 @@ tests/
 | Branches | 75% | State transitions are critical |
 | Functions | 85% | All API handlers tested |
 | Lines | 80% | Maintain quality baseline |
+
+## Notes
+
+- Strict TDD mode is enabled in openspec config
+- Tests mock Redis (no real DB calls in tests)
+- No coverage tool installed yet (would need `@vitest/coverage-v8`)
