@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import satori from 'satori'
 import { Resvg } from '@resvg/resvg-js'
+import sharp from 'sharp'
 import { getAllNumbers, getConfig, getImageCache, setImageCache } from '@/lib/kv'
 import type { NumbersMap } from '@/lib/types'
 import { readFileSync } from 'fs'
@@ -28,19 +29,28 @@ function toRows(numbers: NumbersMap): { num: string; status: string }[][] {
   return rows
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const cached = await getImageCache()
-    if (cached) {
-      const buf = Buffer.from(cached, 'base64')
-      return new NextResponse(new Uint8Array(buf), {
-        headers: { 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=3600' },
-      })
+    const refresh = new URL(request.url).searchParams.get('refresh') === '1'
+    if (!refresh) {
+      const cached = await getImageCache()
+      if (cached) {
+        const buf = Buffer.from(cached, 'base64')
+        return new NextResponse(new Uint8Array(buf), {
+          headers: { 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=3600' },
+        })
+      }
     }
 
     const [numbers, config] = await Promise.all([getAllNumbers(), getConfig()])
     if (!config) {
       return NextResponse.json({ error: 'Raffle not configured' }, { status: 500 })
+    }
+
+    let heroBuf: Buffer | null = null
+    if (config.heroImageUrl) {
+      const filePath = join(process.cwd(), 'public', config.heroImageUrl.replace(/^\//, ''))
+      try { heroBuf = readFileSync(filePath) } catch {}
     }
 
     const fonts = loadFont()
@@ -54,37 +64,35 @@ export async function GET() {
           padding: '24px 16px', fontFamily: FONT_NAME,
         }}
       >
-        <div
-          style={{
-            width: 80, height: 80, borderRadius: 40, backgroundColor: '#f1f5f9',
-            backgroundSize: 'cover', backgroundPosition: 'center',
+        <div style={{ display: 'flex', gap: 14, marginTop: 10, alignSelf: 'flex-start' }}>
+          <div style={{
+            width: 200, height: 200, borderRadius: 100, backgroundColor: '#f1f5f9',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             overflow: 'hidden', flexShrink: 0,
-          }}
-        >
-          <span style={{ fontSize: 32 }}>🎗️</span>
-        </div>
-
-        <span style={{ fontSize: 22, fontWeight: 700, color: '#1e293b', marginTop: 10, textAlign: 'center' }}>
-          {config.name}
-        </span>
-        <span style={{ fontSize: 13, color: '#64748b', marginTop: 2, textAlign: 'center' }}>
-          Beneficiaria: {config.beneficiary}
-        </span>
-
-        <div style={{ display: 'flex', gap: 10, marginTop: 14, justifyContent: 'center' }}>
-          {config.prizes.map((p) => (
-            <div key={p.position} style={{
-              backgroundColor: '#fef2f2', borderRadius: 12, padding: '8px 14px',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 100,
-            }}>
-              <span style={{ fontSize: 11, color: '#dc2626', fontWeight: 600 }}>{p.position}° Premio</span>
-              <span style={{ fontSize: 17, fontWeight: 700, color: '#dc2626', marginTop: 2 }}>${p.amount}</span>
+          }}>
+            <span style={{ fontSize: 60, color: '#64748b' }}>🎗️</span>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <span style={{ fontSize: 20, fontWeight: 700, color: '#1e293b' }}>
+              {config.name}
+            </span>
+            <span style={{ fontSize: 12, color: '#64748b' }}>
+              Beneficiaria: {config.beneficiary}
+            </span>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              {config.prizes.map((p) => (
+                <div key={p.position} style={{
+                  backgroundColor: '#fef2f2', borderRadius: 12, padding: '6px 12px',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center',
+                }}>
+                  <span style={{ fontSize: 10, color: '#dc2626', fontWeight: 600 }}>{p.position}° Premio</span>
+                  <span style={{ fontSize: 15, fontWeight: 700, color: '#dc2626' }}>${p.amount}</span>
+                </div>
+              ))}
             </div>
-          ))}
+            <span style={{ fontSize: 12, color: '#64748b' }}>Precio: ${config.ticketPrice}</span>
+          </div>
         </div>
-
-        <span style={{ fontSize: 12, color: '#64748b', marginTop: 8 }}>Precio: ${config.ticketPrice}</span>
 
         <div style={{
           display: 'flex', flexDirection: 'column', gap: GAP, marginTop: 12,
@@ -103,7 +111,7 @@ export async function GET() {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
                     <span style={{ fontSize: 18, fontWeight: 700, color }}>
-                      {num}{isReserved || isSold ? ' ❤️' : ''}
+                      {num}
                     </span>
                   </div>
                 )
@@ -128,7 +136,22 @@ export async function GET() {
       { width: 540, height: 960, fonts },
     )
 
-    const pngBuffer = new Resvg(svg, { fitTo: { mode: 'width', value: 540 } }).render().asPng()
+    let pngBuffer = new Resvg(svg, { fitTo: { mode: 'width', value: 540 } }).render().asPng()
+
+    if (heroBuf) {
+      const circleSvg = Buffer.from('<svg><circle cx="100" cy="100" r="100" fill="white"/></svg>')
+      const heroCircular = await sharp(heroBuf)
+        .resize(200, 200, { fit: 'cover' })
+        .composite([{ input: circleSvg, blend: 'dest-in' }])
+        .png()
+        .toBuffer()
+
+      pngBuffer = await sharp(pngBuffer)
+        .composite([{ input: heroCircular, top: 34, left: 16 }])
+        .png()
+        .toBuffer()
+    }
+
     const base64 = pngBuffer.toString('base64')
     void setImageCache(base64)
 
@@ -137,6 +160,7 @@ export async function GET() {
     })
   } catch (error) {
     console.error('Error generating raffle image:', error)
-    return NextResponse.json({ error: 'Failed to generate image' }, { status: 500 })
+    const msg = error instanceof Error ? error.message : String(error)
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }

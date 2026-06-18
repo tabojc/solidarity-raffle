@@ -220,9 +220,6 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-zinc-50">
       <header className="bg-white border-b border-zinc-200 px-4 py-3 flex items-center justify-between">
-        <h1 className="font-semibold text-zinc-800">
-          Oficina — {config?.name ?? "Rifa"}
-        </h1>
         <div className="flex gap-2">
           <button
             onClick={handleExport}
