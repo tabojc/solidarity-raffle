@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
-import { fetchNumbers, fetchConfig, confirmNumber, undoConfirmNumber, cancelReservation, exportCsv } from "@/lib/api"
+import { fetchNumbers, fetchConfig, confirmNumber, undoConfirmNumber, cancelReservation, exportCsv, generateImage } from "@/lib/api"
 import type { NumbersMap, RaffleConfig } from "@/lib/types"
 
 export default function AdminPage() {
@@ -147,6 +147,20 @@ export default function AdminPage() {
     }
   }
 
+  async function handleGenerateImage() {
+    try {
+      const blob = await generateImage()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = url
+      a.download = "rifa-solidaria.png"
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Error al generar imagen")
+    }
+  }
+
   function handleLogout() {
     localStorage.removeItem("admin_token")
     setAuthenticated(false)
@@ -215,6 +229,12 @@ export default function AdminPage() {
             className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50"
           >
             Exportar CSV
+          </button>
+          <button
+            onClick={handleGenerateImage}
+            className="rounded-lg border border-primary px-3 py-1.5 text-sm text-primary hover:bg-primary/5"
+          >
+            Generar Imagen
           </button>
           <button
             onClick={handleLogout}

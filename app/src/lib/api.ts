@@ -75,3 +75,9 @@ export async function exportCsv(token: string): Promise<Blob> {
   if (!res.ok) throw new Error("Error al exportar")
   return res.blob()
 }
+
+export async function generateImage(): Promise<Blob> {
+  const res = await fetch("/api/raffle-image")
+  if (!res.ok) throw new Error("Error al generar imagen")
+  return res.blob()
+}
