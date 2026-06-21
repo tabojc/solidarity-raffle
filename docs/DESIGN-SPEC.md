@@ -21,6 +21,10 @@
 | Rose Medium | `#956267` | rgb(149, 98, 103) | Subtitles, secondary text |
 | Rose Dark | `#724454` | rgb(114, 68, 84) | Matrix selected state |
 | Rose Light | `#BD7887` | rgb(189, 120, 135) | Tertiary accents |
+| State Available | `#FEF0F3` | rgb(254, 240, 243) | Available number cell bg |
+| State Available Text | `#D6336C` | rgb(214, 51, 108) | Available number text |
+| State Reserved | `#D6336C` | rgb(214, 51, 108) | Reserved number cell bg |
+| State Sold | `#dc2626` | rgb(220, 38, 38) | Sold number cell bg (consistent with image generation) |
 
 ---
 
@@ -87,9 +91,9 @@
 - **Rows**: 10 rows (00-99)
 - **Cell size**: ~45x45px on mobile
 - **Gap**: 4-6px between cells
-- **Available state**: Light background, dark text
-- **Selected state**: Filled circle `#DA2B4D` or `#D23554`
-- **Unavailable state**: Grayed out or red dot overlay
+- **Available state**: Light pink background (`#FEF0F3`), pink text (`#D6336C`)
+- **Reserved state**: Solid pink background (`#D6336C`), white text — pending payment
+- **Sold state**: Solid red background (`#dc2626`), white text, with line-through
 
 ### 4. Payment Methods
 ```
@@ -129,19 +133,11 @@
 ## Components to Build
 
 ### 1. `NumberGrid` Component
-```html
-<div class="number-grid">
-  <div class="number-cell available" data-number="00">00</div>
-  <div class="number-cell available" data-number="01">01</div>
-  <div class="number-cell selected" data-number="04">●</div>
-  <!-- ... 00-99 -->
-</div>
-```
 
 **States**:
-- `.available` — Can be selected
-- `.selected` — Already chosen by someone
-- `.unavailable` — Sold out
+- `available` — Light pink bg (`#FEF0F3`), pink text (`#D6336C`). Clickable.
+- `reserved` — Solid pink bg (`#D6336C`), white text. Pending payment confirmation.
+- `sold` — Solid red bg (`#dc2626`), white text, line-through. Payment confirmed.
 
 ### 2. `PrizeCard` Component
 ```html
@@ -170,24 +166,21 @@
 
 ```css
 :root {
-  --bg-primary: #FCE7EE;
-  --bg-secondary: #FBEBF1;
-  --text-primary: #725057;
-  --text-dark: #562C29;
-  --accent-primary: #DA2B4D;
-  --accent-secondary: #D23554;
-  --rose-muted: #D8A4A7;
-  --rose-medium: #956267;
-  --rose-dark: #724454;
-  --rose-light: #BD7887;
-  
-  --font-primary: 'Montserrat', sans-serif;
-  --font-mono: 'Roboto Mono', monospace;
-  
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 50%;
-  --shadow-card: 0 2px 8px rgba(114, 80, 87, 0.1);
+  --color-available: #D6336C;
+  --color-available-bg: #FEF0F3;
+  --color-available-border: #FCD1DC;
+  --color-reserved: #D6336C;
+  --color-reserved-bg: #D6336C;
+  --color-reserved-border: #D6336C;
+  --color-sold: #ffffff;
+  --color-sold-bg: #dc2626;
+  --color-sold-border: #b91c1c;
+
+  --color-primary: #D6336C;
+  --color-primary-dark: #B82A58;
+
+  --font-sans: 'Geist Sans', sans-serif;
+  --font-mono: 'Geist Mono', monospace;
 }
 ```
 
