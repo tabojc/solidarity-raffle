@@ -22,6 +22,7 @@ export default function AdminPage() {
   const [reserveName, setReserveName] = useState("")
   const [reserving, setReserving] = useState(false)
   const [reserveErr, setReserveErr] = useState<string | null>(null)
+  const [generating, setGenerating] = useState(false)
 
   const loadData = useCallback(async () => {
     try {
@@ -179,6 +180,7 @@ export default function AdminPage() {
   }
 
   async function handleGenerateImage() {
+    setGenerating(true)
     try {
       const blob = await generateImage()
       const url = URL.createObjectURL(blob)
@@ -189,6 +191,8 @@ export default function AdminPage() {
       URL.revokeObjectURL(url)
     } catch (err) {
       alert(err instanceof Error ? err.message : "Error al generar imagen")
+    } finally {
+      setGenerating(false)
     }
   }
 
@@ -260,9 +264,10 @@ export default function AdminPage() {
           </button>
           <button
             onClick={handleGenerateImage}
-            className="rounded-lg border border-primary px-3 py-1.5 text-sm text-primary hover:bg-primary/5"
+            disabled={generating}
+            className="rounded-lg border border-primary px-3 py-1.5 text-sm text-primary hover:bg-primary/5 disabled:opacity-50 transition-colors"
           >
-            Generar Imagen
+            {generating ? "Generando..." : "Generar Imagen"}
           </button>
           <button
             onClick={handleLogout}
