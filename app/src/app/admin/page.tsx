@@ -23,6 +23,7 @@ export default function AdminPage() {
   const [reserving, setReserving] = useState(false)
   const [reserveErr, setReserveErr] = useState<string | null>(null)
   const [generating, setGenerating] = useState(false)
+  const [exporting, setExporting] = useState(false)
 
   const loadData = useCallback(async () => {
     try {
@@ -166,6 +167,7 @@ export default function AdminPage() {
   }
 
   async function handleExport() {
+    setExporting(true)
     try {
       const blob = await exportCsv(token)
       const url = URL.createObjectURL(blob)
@@ -176,6 +178,8 @@ export default function AdminPage() {
       URL.revokeObjectURL(url)
     } catch (err) {
       alert(err instanceof Error ? err.message : "Error al exportar")
+    } finally {
+      setExporting(false)
     }
   }
 
@@ -258,9 +262,10 @@ export default function AdminPage() {
         <div className="flex gap-2">
           <button
             onClick={handleExport}
-            className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50"
+            disabled={exporting}
+            className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50 disabled:opacity-50 transition-colors"
           >
-            Exportar CSV
+            {exporting ? "Exportando..." : "Exportar CSV"}
           </button>
           <button
             onClick={handleGenerateImage}
