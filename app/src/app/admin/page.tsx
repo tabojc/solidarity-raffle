@@ -20,6 +20,7 @@ export default function AdminPage() {
   const [confirmModal, setConfirmModal] = useState<string | null>(null)
   const [reserveNum, setReserveNum] = useState("")
   const [reserveName, setReserveName] = useState("")
+  const [reservePhone, setReservePhone] = useState("")
   const [reserving, setReserving] = useState(false)
   const [reserveErr, setReserveErr] = useState<string | null>(null)
   const [generating, setGenerating] = useState(false)
@@ -143,12 +144,13 @@ export default function AdminPage() {
     setReserving(true)
     setReserveErr(null)
     try {
+      const contact = [reserveName.trim(), reservePhone.trim()].filter(Boolean).join(" - ")
       const res = await fetch("/api/numbers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           num: reserveNum.trim().padStart(2, "0"),
-          reservedBy: reserveName.trim(),
+          reservedBy: contact,
           adminToken: token,
         }),
       })
@@ -158,6 +160,7 @@ export default function AdminPage() {
       }
       setReserveNum("")
       setReserveName("")
+      setReservePhone("")
       await loadData()
     } catch (err) {
       setReserveErr(err instanceof Error ? err.message : "Error al reservar")
@@ -321,8 +324,8 @@ export default function AdminPage() {
           <h2 className="text-lg font-semibold text-zinc-800 mb-3">
             Reservar número (llamada telefónica)
           </h2>
-          <form onSubmit={handleAdminReserve} className="flex gap-2 items-end">
-            <div className="flex-1">
+          <form onSubmit={handleAdminReserve} className="flex flex-col gap-3">
+            <div>
               <label className="block text-sm font-medium text-zinc-700 mb-1">
                 Número
               </label>
@@ -333,7 +336,7 @@ export default function AdminPage() {
                 placeholder="Ej: 42"
               />
             </div>
-            <div className="flex-[2]">
+            <div>
               <label className="block text-sm font-medium text-zinc-700 mb-1">
                 Nombre del cliente
               </label>
@@ -344,10 +347,22 @@ export default function AdminPage() {
                 placeholder="Nombre y apellido"
               />
             </div>
+            <div>
+              <label className="block text-sm font-medium text-zinc-700 mb-1">
+                Teléfono <span className="text-zinc-400 font-normal">(opcional)</span>
+              </label>
+              <input
+                value={reservePhone}
+                onChange={(e) => setReservePhone(e.target.value)}
+                className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="0412-1234567"
+                type="tel"
+              />
+            </div>
             <button
               type="submit"
               disabled={reserving || !reserveNum.trim() || !reserveName.trim()}
-              className="rounded-lg bg-amber-500 text-white px-4 py-2 text-sm font-medium hover:bg-amber-600 disabled:opacity-50 transition-colors"
+              className="w-full rounded-lg bg-amber-500 text-white px-4 py-2.5 text-sm font-medium hover:bg-amber-600 disabled:opacity-50 transition-colors"
             >
               {reserving ? "..." : "Reservar"}
             </button>
