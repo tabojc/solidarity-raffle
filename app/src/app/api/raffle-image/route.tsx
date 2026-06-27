@@ -226,7 +226,7 @@ export async function GET(request: Request) {
     await setImageCache(base64)
 
     return new NextResponse(new Uint8Array(pngBuffer), {
-      headers: { 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=3600' },
+      headers: { 'Content-Type': 'image/png', 'Cache-Control': 'no-cache, no-store, must-revalidate' },
     })
   } catch (error) {
     console.error('[raffle-image] Error generating raffle image:', error)
