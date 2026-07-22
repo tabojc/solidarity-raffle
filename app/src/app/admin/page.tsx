@@ -23,8 +23,28 @@ export default function AdminPage() {
   const [reservePhone, setReservePhone] = useState("")
   const [reserving, setReserving] = useState(false)
   const [reserveErr, setReserveErr] = useState<string | null>(null)
+  const [verifying, setVerifying] = useState(false)
+  const [loginError, setLoginError] = useState<string | null>(null)
   const [generating, setGenerating] = useState(false)
   const [exporting, setExporting] = useState(false)
+
+  function formatError(err: unknown, action: string): string {
+    const msg = err instanceof Error ? err.message : `Error al ${action}`
+    if (msg === "Unauthorized") {
+      return "No autorizado — la clave secreta no coincide con el servidor. Revisá que ADMIN_TOKEN esté bien configurado."
+    }
+    return msg
+  }
+
+  async function verifyToken(t: string): Promise<boolean> {
+    try {
+      const res = await fetch(`/api/admin/verify?token=${encodeURIComponent(t)}`)
+      const body = await res.json()
+      return body.valid === true
+    } catch {
+      return false
+    }
+  }
 
   const loadData = useCallback(async () => {
     try {
@@ -45,28 +65,60 @@ export default function AdminPage() {
     const urlToken = params.get("token")
     const effectiveToken = urlToken || stored
 
-    if (effectiveToken) {
-      /* eslint-disable react-hooks/set-state-in-effect */
-      setToken(effectiveToken)
-      setAuthenticated(true)
-      loadData()
-      /* eslint-enable react-hooks/set-state-in-effect */
-      if (urlToken) {
-        localStorage.setItem("admin_token", urlToken)
-        window.history.replaceState(null, "", "/admin")
+    async function init() {
+      if (effectiveToken) {
+        /* eslint-disable react-hooks/set-state-in-effect */
+        setToken(effectiveToken)
+        /* eslint-enable react-hooks/set-state-in-effect */
+
+        if (urlToken) {
+          localStorage.setItem("admin_token", urlToken)
+          window.history.replaceState(null, "", "/admin")
+        }
+
+        // Verificar que el token sea válido contra el servidor
+        const valid = await verifyToken(effectiveToken)
+        if (!valid) {
+          localStorage.removeItem("admin_token")
+          /* eslint-disable react-hooks/set-state-in-effect */
+          setToken("")
+          setLoginError("El token guardado ya no es válido. Ingresá la clave nuevamente.")
+          setLoading(false)
+          /* eslint-enable react-hooks/set-state-in-effect */
+          return
+        }
+
+        /* eslint-disable react-hooks/set-state-in-effect */
+        setAuthenticated(true)
+        loadData()
+        /* eslint-enable react-hooks/set-state-in-effect */
+      } else {
+        setLoading(false)
       }
-    } else {
-      setLoading(false)
     }
+
+    init()
 
     const interval = setInterval(loadData, 5000)
     return () => clearInterval(interval)
   }, [loadData])
 
-  function handleLogin(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
-    if (!token.trim()) return
-    localStorage.setItem("admin_token", token.trim())
+    const trimmed = token.trim()
+    if (!trimmed) return
+
+    setVerifying(true)
+    setLoginError(null)
+
+    const valid = await verifyToken(trimmed)
+    if (!valid) {
+      setVerifying(false)
+      setLoginError("Clave inválida — revisá que coincida con ADMIN_TOKEN en el servidor.")
+      return
+    }
+
+    localStorage.setItem("admin_token", trimmed)
     setAuthenticated(true)
     setLoading(true)
     loadData()
@@ -79,7 +131,7 @@ export default function AdminPage() {
       await confirmNumber(num, token)
       await loadData()
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Error al confirmar")
+      alert(formatError(err, "confirmar"))
     } finally {
       setConfirming(null)
     }
@@ -91,7 +143,7 @@ export default function AdminPage() {
       await undoConfirmNumber(num, token)
       await loadData()
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Error al deshacer")
+      alert(formatError(err, "deshacer"))
     } finally {
       setUndoing(null)
     }
@@ -108,7 +160,7 @@ export default function AdminPage() {
       await renameNumber(num, token, trimmed)
       await loadData()
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Error al renombrar")
+      alert(formatError(err, "renombrar"))
     } finally {
       setRenaming(null)
       setEditingName(null)
@@ -131,7 +183,7 @@ export default function AdminPage() {
       await cancelReservation(num, token)
       await loadData()
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Error al cancelar")
+      alert(formatError(err, "cancelar"))
     } finally {
       setCancelling(null)
     }
@@ -156,6 +208,9 @@ export default function AdminPage() {
       })
       if (!res.ok) {
         const body = await res.json().catch(() => ({}))
+        if (res.status === 401) {
+          throw new Error("No autorizado — la clave secreta no coincide con el servidor.")
+        }
         throw new Error(body.error ?? "Error al reservar")
       }
       setReserveNum("")
@@ -180,7 +235,7 @@ export default function AdminPage() {
       a.click()
       URL.revokeObjectURL(url)
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Error al exportar")
+      alert(formatError(err, "exportar"))
     } finally {
       setExporting(false)
     }
@@ -197,7 +252,7 @@ export default function AdminPage() {
       a.click()
       URL.revokeObjectURL(url)
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Error al generar imagen")
+      alert(formatError(err, "generar imagen"))
     } finally {
       setGenerating(false)
     }
@@ -224,17 +279,29 @@ export default function AdminPage() {
             </label>
             <input
               value={token}
-              onChange={(e) => setToken(e.target.value)}
+              onChange={(e) => {
+                setToken(e.target.value)
+                if (loginError) setLoginError(null)
+              }}
               className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               placeholder="Ingresa la clave"
               type="password"
+              disabled={verifying}
             />
           </div>
+
+          {loginError && (
+            <p className="text-red-600 text-sm bg-red-50 rounded-lg px-3 py-2">
+              {loginError}
+            </p>
+          )}
+
           <button
             type="submit"
-            className="w-full rounded-lg bg-primary text-white py-2.5 font-medium hover:bg-primary-dark"
+            disabled={verifying || !token.trim()}
+            className="w-full rounded-lg bg-primary text-white py-2.5 font-medium hover:bg-primary-dark disabled:opacity-50 transition-colors"
           >
-            Ingresar
+            {verifying ? "Verificando..." : "Ingresar"}
           </button>
         </form>
       </div>
