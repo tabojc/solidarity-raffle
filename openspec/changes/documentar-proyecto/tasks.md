@@ -46,4 +46,4 @@ Chain strategy: pending
 ## Phase 5: Verification
 
 - [x] 5.1 Ejecutar `pnpm test` en `app/` y verificar que los 7 test files pasan (sin regresiones)
-- [ ] 5.2 Ejecutar `pnpm build` y verificar build exitoso
+- [x] 5.2 Ejecutar `pnpm build` y verificar build exitoso
