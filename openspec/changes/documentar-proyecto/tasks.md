@@ -31,8 +31,8 @@ Chain strategy: pending
 
 ## Phase 2: API & Auth Docs
 
-- [ ] 2.1 Crear `docs/API.md` — 7 endpoints con métodos, params, auth, rate limits, CORS, respuestas
-- [ ] 2.2 Crear `docs/AUTH.md` — flujo admin auth (URL token + formulario + localStorage), bug de cancel (race condition UI), fix de verify endpoint
+- [x] 2.1 Crear `docs/API.md` — 7 endpoints con métodos, params, auth, rate limits, CORS, respuestas
+- [x] 2.2 Crear `docs/AUTH.md` — flujo admin auth (URL token + formulario + localStorage), bug de token inválido, fix de verify endpoint y formatError
 
 ## Phase 3: Deploy & Components Docs
 
