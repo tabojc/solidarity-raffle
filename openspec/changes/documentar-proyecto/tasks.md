@@ -36,14 +36,14 @@ Chain strategy: pending
 
 ## Phase 3: Deploy & Components Docs
 
-- [ ] 3.1 Crear `docs/DEPLOY.md` — `vercel.json`, `next.config.ts`, env vars (secretas y públicas), build commands, scripts, preprocesamiento hero
-- [ ] 3.2 Crear `docs/COMPONENTS.md` — Hero, NumberGrid (+NumberCell), ReserveModal, AdminPage con props, estados, responsabilidades
+- [x] 3.1 Crear `docs/DEPLOY.md` — `vercel.json`, `next.config.ts`, env vars (secretas y públicas), build commands, scripts, preprocesamiento hero
+- [x] 3.2 Crear `docs/COMPONENTS.md` — Hero, NumberGrid (+NumberCell), ReserveModal, AdminPage con props, estados, responsabilidades
 
 ## Phase 4: Testing Docs
 
-- [ ] 4.1 Crear `docs/TESTING.md` — Vitest 4.1.8, patrón smoke tests + unit, mocks de KV, cobertura actual, qué no está testeado, cómo correr tests
+- [x] 4.1 Crear `docs/TESTING.md` — Vitest 4.1.8, patrón smoke tests + unit, mocks de KV, cobertura actual, qué no está testeado, cómo correr tests
 
 ## Phase 5: Verification
 
-- [ ] 5.1 Ejecutar `pnpm test` en `app/` y verificar que los 7 test files pasan (sin regresiones)
+- [x] 5.1 Ejecutar `pnpm test` en `app/` y verificar que los 7 test files pasan (sin regresiones)
 - [ ] 5.2 Ejecutar `pnpm build` y verificar build exitoso
